@@ -16,6 +16,8 @@
 #define BOX_WIDTH 20
 #define MATRIX_NAME_STRING "Binary File Contents"
 
+const int maxRecordStringLength = 16;
+
 using namespace std;
 
 /* Class for Reading Binary File Header Records (default constructor) */
@@ -33,7 +35,7 @@ class BinaryFileData
 {
 public:
   int strLength;
-  char strBuffer[16];
+  char strBuffer[maxRecordStringLength];
 }
 ;
 
@@ -73,15 +75,17 @@ int main()
   /* Displaying the Matrix */
   drawCDKMatrix(myMatrix, true);
 
-
-  /* Reading Header from Binary file using BinaryFileHeader class with default constructer */
+  /* Reading Header from Binary file using BinaryFileHeader class with default constructor */
   BinaryFileHeader *myHeader = new BinaryFileHeader();
+  /* Reading Data from Binary file using BinaryFileData class with defaul contructor */ 
+  //BinaryFileData *myData = new BinaryFileData();
+
   /* Opening file */
   ifstream binInfile ("cs3377.bin", ios::in | ios::binary);
   /* Ensuring file opened, otherwise displaying error message. */
   if ( binInfile.is_open() )
     {
-      binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
+       binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
       //cout << "Magic Number was: " << hex << uppercase << myHeader->magicNumber << endl;
       //cout << "Version Number was: " << dec << myHeader->versionNumber << endl;
       //cout << "Number of Recs was: " << setprecision(10) << myHeader->numRecords << endl;
@@ -120,7 +124,19 @@ int main()
       setCDKMatrixCell(myMatrix, 1, 3, recnum_arr);
 
       /* Starting to read data records. */
-  
+      /*binInfile.read((char *) myData, sizeof (BinaryFileData));
+      string content = "";
+      int i = 0;
+      for (i=0; binInfile.eof()!=true; i++)
+	{
+	  //cout << "String Length was : " << dec << myHeader->versionNumber << endl;
+	  //cout << "String (in buffer was) " << setprecision(10) << myHeader->numRecords << endl;
+	  content += binInfile.get();
+	  content += ",";
+	}
+      cout << content << endl;
+      */
+      
       /* Displaying Matrix*/
       drawCDKMatrix(myMatrix, true);    /* required  */
 
