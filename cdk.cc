@@ -8,14 +8,25 @@
 
 #include <iostream>
 #include "cdk.h"
+#include <fstream>
+#include <iomanip>
 
 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
-#define BOX_WIDTH 15
+#define BOX_WIDTH 20
 #define MATRIX_NAME_STRING "Binary File Contents"
 
 using namespace std;
+
+class BinaryFileHeader
+{
+public:
+  int magicNumber;
+  int versionNumber;
+  long int numRecords;
+}
+;
 
 
 int main()
@@ -65,11 +76,56 @@ int main()
   /* Display the Matrix */
   drawCDKMatrix(myMatrix, true);
 
-  /*
-   * Dipslay a message
-   */
-  setCDKMatrixCell(myMatrix, 2, 2, "Test Message");
+
+  /* Reading Header from Binary file using BinaryFileHeader class with defaul constructer */
+  BinaryFileHeader *myHeader = new BinaryFileHeader();
+  ifstream binInfile ("cs3377.bin", ios::in | ios::binary);
+
+  binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
+  //cout << "Magic Number was: " << hex << uppercase << myHeader->magicNumber << endl;
+  //cout << "Version Number was: " << dec << myHeader->versionNumber << endl;
+  //cout << "Number of Recs was: " << setprecision(10) << myHeader->numRecords << endl;
+  
+  /* Formatting Magic Number Header to display properly*/
+  char mnum_arr[15];
+  int mnum = myHeader->magicNumber;
+  sprintf(mnum_arr, "%08X", mnum); 
+  char * magicstr = "Magic: Ox";
+  char mag_arr[50];
+  strncpy(mag_arr, magicstr, 9);
+  strcat(mag_arr, mnum_arr);
+  /* Adding Magic Number in matrix */
+  setCDKMatrixCell(myMatrix, 1, 1, mag_arr);
+
+  /* Formatting Version Number Header to display properly*/
+  char vnum_arr[10];
+  int vnum = myHeader->versionNumber;
+  sprintf(vnum_arr, "%d", vnum);
+  char * versionstr = "Version: ";
+  char ver_arr[40];
+  strncpy(ver_arr, versionstr, 9);
+  strcat(ver_arr, vnum_arr);
+  /* Adding Version number in matrix */
+  setCDKMatrixCell(myMatrix, 1, 2, ver_arr);
+
+  /* Formatting Number of Records Header to display properly*/
+  char rnum_arr[10];
+  int rnum = myHeader->numRecords;
+  sprintf(rnum_arr, "%d", rnum);
+  char * numberrecordstr = "NumRecords: ";
+  char recnum_arr[40];
+  strncpy(recnum_arr, numberrecordstr, 12);
+  strcat(recnum_arr, rnum_arr);
+  /* Adding Number of Records in matrix */
+  setCDKMatrixCell(myMatrix, 1, 3, recnum_arr);
+
+
+  
+  /* Displaying Matrix*/
   drawCDKMatrix(myMatrix, true);    /* required  */
+
+  /* closing binary file opened for reading header */
+  binInfile.close();
 
   /* So we can see results, pause until a key is pressed. */
   unsigned char x;

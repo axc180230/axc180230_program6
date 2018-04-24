@@ -15,7 +15,7 @@ LDLIBS = -lcdk -lcurses
 PROJECTNAME = program6
 
 # Source Files
-SRCS = binread.cc #cdk.cc
+SRCS = cdk.cc #binread.cc
 
 # Name of the executable
 EXEC = Program6

@@ -14,8 +14,7 @@ public:
 
 int main()
 {
-  BinaryFileHeader *myHeader = new BinaryFileHeader();
-  
+  BinaryFileHeader *myHeader = new BinaryFileHeader();  
   ifstream binInfile ("cs3377.bin", ios::in | ios::binary);
 
   binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
