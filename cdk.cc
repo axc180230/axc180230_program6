@@ -1,9 +1,10 @@
 /*
- * New Author: Angel Castaneda
- * Email:  angel.castaneda@utdallas.edu
- * Usage of CDK Matrix
- * File Extracted: cs3377.bin
- */
+# Angel Castaneda
+# Email: axc180230@utdallas.edu
+# Course SE 3377.501
+* CDK Matrix From Binary File Extraction
+* File Extracted: cs3377.bin
+*/
 
 #include <iostream>
 #include "cdk.h"
