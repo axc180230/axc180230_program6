@@ -9,6 +9,9 @@
 #include "cdk.h"
 #include <fstream>
 #include <iomanip>
+#include <stdio.h>
+#include <stdint.h>
+#include <ctype.h>
 
 /* Defining parameters for CDK window */
 #define MATRIX_WIDTH 3
@@ -16,7 +19,7 @@
 #define BOX_WIDTH 20
 #define MATRIX_NAME_STRING "Binary File Contents"
 
-const int maxRecordStringLength = 16;
+const int maxRecordStringLength = 25;
 
 using namespace std;
 
@@ -24,9 +27,9 @@ using namespace std;
 class BinaryFileHeader
 {
 public:
-  int magicNumber;
-  int versionNumber;
-  long int numRecords;
+  uint32_t magicNumber;
+  uint32_t versionNumber;
+  uint64_t numRecords;
 }
 ;
 
@@ -34,7 +37,7 @@ public:
 class BinaryFileData
 {
 public:
-  int strLength;
+  uint8_t strLength;
   char strBuffer[maxRecordStringLength];
 }
 ;
@@ -78,18 +81,17 @@ int main()
   /* Reading Header from Binary file using BinaryFileHeader class with default constructor */
   BinaryFileHeader *myHeader = new BinaryFileHeader();
   /* Reading Data from Binary file using BinaryFileData class with defaul contructor */ 
-  //BinaryFileData *myData = new BinaryFileData();
+  BinaryFileData *myData = new BinaryFileData();
+  /* Creating fstream for file */
+  fstream binInfile;
 
   /* Opening file */
-  ifstream binInfile ("cs3377.bin", ios::in | ios::binary);
+  binInfile.open("cs3377.bin", ios::in | ios::binary);
   /* Ensuring file opened, otherwise displaying error message. */
   if ( binInfile.is_open() )
     {
        binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
-      //cout << "Magic Number was: " << hex << uppercase << myHeader->magicNumber << endl;
-      //cout << "Version Number was: " << dec << myHeader->versionNumber << endl;
-      //cout << "Number of Recs was: " << setprecision(10) << myHeader->numRecords << endl;
-      
+
       /* Formatting Magic Number Header to display properly*/
       char mnum_arr[9];
       int mnum = myHeader->magicNumber;
@@ -123,19 +125,30 @@ int main()
       /* Adding Number of Records in matrix */
       setCDKMatrixCell(myMatrix, 1, 3, recnum_arr);
 
-      /* Starting to read data records. */
-      /*binInfile.read((char *) myData, sizeof (BinaryFileData));
-      string content = "";
-      int i = 0;
-      for (i=0; binInfile.eof()!=true; i++)
-	{
-	  //cout << "String Length was : " << dec << myHeader->versionNumber << endl;
-	  //cout << "String (in buffer was) " << setprecision(10) << myHeader->numRecords << endl;
-	  content += binInfile.get();
-	  content += ",";
+      /* Starting to read data records. Using array for loop. */
+      string matrix_arr[3 * 4];
+      char temp[1024];
+      for (int i = 0; i < 4; i++)
+	{ /* Reading data record string and length */
+	  binInfile.read((char*)myData, sizeof(BinaryFileData));
+	  sprintf(temp, "%d", myData->strLength);
+	  matrix_arr[i] = "strlen: ";
+	  matrix_arr[i] = matrix_arr[i] + temp;
+	  
+	  /* Reading dara record string */
+	  sprintf(temp, "%s", myData->strBuffer);
+	  matrix_arr[i+4] = temp;
 	}
-      cout << content << endl;
-      */
+      
+      /* Adding Data Records in matrix (from loop) */
+      setCDKMatrixCell(myMatrix, 2, 1, matrix_arr[0].c_str());
+      setCDKMatrixCell(myMatrix, 2, 2, matrix_arr[4].c_str());
+      setCDKMatrixCell(myMatrix, 3, 1, matrix_arr[1].c_str());
+      setCDKMatrixCell(myMatrix, 3, 2, matrix_arr[5].c_str());
+      setCDKMatrixCell(myMatrix, 4, 1, matrix_arr[2].c_str());
+      setCDKMatrixCell(myMatrix, 4, 2, matrix_arr[6].c_str());
+      setCDKMatrixCell(myMatrix, 5, 1, matrix_arr[3].c_str());
+      setCDKMatrixCell(myMatrix, 5, 2, matrix_arr[7].c_str());
       
       /* Displaying Matrix*/
       drawCDKMatrix(myMatrix, true);    /* required  */
